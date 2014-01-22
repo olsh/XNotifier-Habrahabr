@@ -92,10 +92,8 @@ function process(aData, aHttp) {
             if (habrRedirectLink) {
                 this.getHtml(habrRedirectLink[1]);
             }
-            return false;
-        case ST_LOGIN_RES + 1:
             this.stage = ST_DATA;
-            return this.process(aData, aHttp);
+            return true;
     }
     return this.baseProcess(aData, aHttp);
 }
