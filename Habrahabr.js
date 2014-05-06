@@ -4,7 +4,7 @@
  **********************************************************/
 
 var name = "Habrahabr";
-var ver = "2014-01-22";
+var ver = "2014-05-06";
 var hostString = "habrahabr.ru";
 
 function init() {
@@ -51,19 +51,26 @@ function checkLogin(aData, aHttp) {
 }
 
 function process(aData, aHttp) {
+    if(this.debug)dlog(this.id+"\t"+this.user+"\t"+this.stage,aData);
     switch (this.stage) {
         case ST_PRE:
             this.getHtml("https://auth.habrahabr.ru/login/");
             return false;
         case ST_PRE_RES:
+            // TODO: Figure out how to get the recaptcha link (habr uses ajax calls to get captcha)
             var recaptchaScriptLink = aData.match(/(\/\/www.google.com\/recaptcha\/api\/challenge\S+?)"/);
             var state = aData.match(/state=([\w\n]+)/);
-            if (recaptchaScriptLink && state) {
+            if (state) {
                 this.originPostData = this.loginData[LOGIN_POST];
                 this.loginData[LOGIN_POST] += "&state=" + encodeURIComponent(state[1]);
                 this.referer = this.loginData[LOGIN_URL] + "?" + "&state=" + encodeURIComponent(state[1]) + "&consumer=habrahabr";
-                this.getHtml("https:" + recaptchaScriptLink[1]);
-                return false;
+                if (recaptchaScriptLink) {
+                    this.getHtml("https:" + recaptchaScriptLink[1]);
+                    return false;
+                } else { // If we can't find the captcha, then just login
+                    this.stage = ST_LOGIN;
+                    return this.process(aData, aHttp);
+                }
             }
             this.onError();
             break;
