@@ -16,14 +16,14 @@ function init() {
 }
 
 function getCount(aData) {
-    var userMenu = aData.match(/userpanel[\s\S]*?charge_string/);
-    if (!userMenu) {
+    var trackerNode = aData.match(/<a.+?data-tab="tracker_tab"[\s\S]*?\/a>/);
+    if (!trackerNode) {
         return -1;
     } else {
         var counter = 0;
-        var counterRegex = /class="count"[^>]*>\+?(\d*)/g
+        var counterRegex = /class="count"[^>]*>\+?(\d*)/g;
         var counterResult;
-        while ((counterResult = counterRegex.exec(userMenu[0])) !== null) {
+        while ((counterResult = counterRegex.exec(trackerNode[0])) !== null) {
             counter += +counterResult[1] || 0;
         }
         return counter;
@@ -36,8 +36,8 @@ function checkLogin(aData, aHttp) {
             this.getHtml(this.dataURL);
             return false;
         case ST_CHECK + 1:
-            var loginLink = aData.match(/<a.+?class="login"/);
-            if (!loginLink) {//logged in already
+            var trackerLink = aData.match(/<a.+?data-tab="tracker_tab"/);
+            if (trackerLink) {//logged in already
                 this.stage = ST_DATA;
                 this.getHtml(this.dataURL);
                 return true;
@@ -51,7 +51,7 @@ function checkLogin(aData, aHttp) {
 }
 
 function process(aData, aHttp) {
-    if(this.debug)dlog(this.id+"\t"+this.user+"\t"+this.stage,aData);
+    if (this.debug)dlog(this.id + "\t" + this.user + "\t" + this.stage, aData);
     switch (this.stage) {
         case ST_PRE:
             this.getHtml("https://auth.habrahabr.ru/login/");
