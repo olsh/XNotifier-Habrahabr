@@ -4,7 +4,7 @@
  **********************************************************/
 
 var name = "Habrahabr";
-var ver = "2014-05-06";
+var ver = "2014-05-16";
 var hostString = "habrahabr.ru";
 
 function init() {
