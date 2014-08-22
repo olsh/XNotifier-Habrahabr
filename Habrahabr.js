@@ -4,7 +4,7 @@
  **********************************************************/
 
 var name = "Habrahabr";
-var ver = "2014-05-16";
+var ver = "2014-08-22";
 var hostString = "habrahabr.ru";
 
 function init() {
@@ -16,7 +16,7 @@ function init() {
 }
 
 function getCount(aData) {
-    var trackerNode = aData.match(/<a.+?data-tab="tracker_tab"[\s\S]*?\/a>/);
+    var trackerNode = aData.match(/<div.+?class="nav_panel"[\s\S]*?\/div>/);
     if (!trackerNode) {
         return -1;
     } else {
